@@ -23,7 +23,7 @@ func loadURL(url: String) async throws {
 }
 ```
 
-### Load a URL and Find an Element
+### Load a URL and Find an Element
 
 ```swift
 @Test("Find an element", arguments: [("https://example.com", "/html/body/div/h1", "Example Domain")])
