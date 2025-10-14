@@ -2,7 +2,7 @@ import Testing
 import WebDriver
 import Foundation
 
-@testable import SafariWebDriver
+@testable import SafariDriver
 
 @Test("Load a URL", arguments: ["https://example.com"])
 func loadURL(url: String) async throws {
