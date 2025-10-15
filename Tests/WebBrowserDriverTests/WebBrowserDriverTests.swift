@@ -2,11 +2,13 @@ import Testing
 import WebDriver
 import Foundation
 
-@testable import SafariDriver
+@testable import WebBrowserDriver
+
+let browser = Browser.msedge("/Users/felix/Downloads/edgedriver_mac64_m1/msedgedriver", msEdgePath: "/Volumes/Apps/Microsoft Edge.app/Contents/MacOS/Microsoft Edge")
 
 @Test("Load a URL", arguments: ["https://example.com"])
 func loadURL(url: String) async throws {
-    let session = try await SafariDriver.makeSafariDriverSession()
+    let session = try await WebBrowserDriver.makeSession(with: browser)
 
     let url = try #require(URL(string: url))
     try session.url(url)
@@ -19,7 +21,7 @@ func loadURL(url: String) async throws {
 
 @Test("Find an element", arguments: [("https://example.com", "/html/body/div/h1", "Example Domain")])
 func findElement(url: String, xpath: String, expectedText: String) async throws {
-    let session = try await SafariDriver.makeSafariDriverSession()
+    let session = try await WebBrowserDriver.makeSession(with: browser)
 
     let url = try #require(URL(string: url))
     try session.url(url)

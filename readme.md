@@ -1,6 +1,6 @@
-# Swift-SafariDriver
+# Swift-WebBrowserDriver
 
-A layer over [the excellent `swift-webdriver`](https://github.com/thebrowsercompany/swift-webdriver) to expose Safari's `safaridriver` as a service.
+A layer over [the excellent `swift-webdriver`](https://github.com/thebrowsercompany/swift-webdriver) to expose the webdrivers of Safari, Edge, Chrome/Chromium, and Firefox.
 
 Don't rely on this to work.
 
@@ -9,9 +9,11 @@ Don't rely on this to work.
 ### Load a URL
 
 ```swift
+let browser = Browser.msedge("/Users/felix/Downloads/edgedriver_mac64_m1/msedgedriver", msEdgePath: "/Volumes/Apps/Microsoft Edge.app/Contents/MacOS/Microsoft Edge") // Or wherever Edge's driver and executable are
+
 @Test("Load a URL", arguments: ["https://example.com"])
 func loadURL(url: String) async throws {
-    let session = try await SafariDriver.makeSafariDriverSession()
+    let session = try await WebBrowserDriver.makeSession(with: browser)
 
     let url = try #require(URL(string: url))
     try session.url(url)
@@ -26,9 +28,11 @@ func loadURL(url: String) async throws {
 ### Load a URL and Find an Element
 
 ```swift
+let browser = Browser.msedge("/Users/felix/Downloads/edgedriver_mac64_m1/msedgedriver", msEdgePath: "/Volumes/Apps/Microsoft Edge.app/Contents/MacOS/Microsoft Edge")
+
 @Test("Find an element", arguments: [("https://example.com", "/html/body/div/h1", "Example Domain")])
 func findElement(url: String, xpath: String, expectedText: String) async throws {
-    let session = try await SafariDriver.makeSafariDriverSession()
+    let session = try await WebBrowserDriver.makeSession(with: browser)
 
     let url = try #require(URL(string: url))
     try session.url(url)
@@ -52,13 +56,13 @@ let package = Package(
     name: ...,
     products: ...,
     dependencies: [
-        .package(url: "https://github.com/ntflix/Swift-SafariDriver", branch: "main")
+        .package(url: "https://github.com/ntflix/Swift-WebBrowserDriver", branch: "main")
     ],
     targets: [
         .target(
             ...,
             dependencies: [
-                .product(name: "SafariDriver", package: "swift-safaridriver")
+                .product(name: "WebBrowserDriver", package: "swift-webbrowserdriver")
             ]
         )
     ]
