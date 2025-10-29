@@ -86,4 +86,25 @@ public enum Browser: Sendable {
 
         return cases
     }
+
+    public init(from string: String) throws {
+        switch string.lowercased() {
+        #if os(macOS)
+            case "safari":
+                self = .safari()
+            case "safaritechnologypreview":
+                self = .safariTechnologyPreview()
+        #endif
+        case "chrome":
+            self = .chrome(nil)
+        case "msedge":
+            self = .msedge(nil)
+        case "firefox":
+            self = .firefox(nil)
+        case "chromium":
+            self = .chromium(nil)
+        default:
+            throw BrowserError.invalidBrowser(name: string)
+        }
+    }
 }
