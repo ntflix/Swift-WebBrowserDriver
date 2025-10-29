@@ -87,7 +87,7 @@ public enum Browser: Sendable {
         return cases
     }
 
-    public init(from string: String, driverPath: String? = nil) throws {
+    public init(from string: String, driverPath: String? = nil, browserPath: String? = nil) throws {
         switch string.lowercased() {
         #if os(macOS)
             case "safari":
@@ -99,13 +99,13 @@ public enum Browser: Sendable {
                 )
         #endif
         case "chrome":
-            self = .chrome(driverPath ?? "/usr/local/bin/chromedriver")
+            self = .chrome(driverPath ?? "/usr/local/bin/chromedriver", chromePath: browserPath)
         case "msedge":
-            self = .msedge(driverPath ?? "/usr/local/bin/edgedriver")
+            self = .msedge(driverPath ?? "/usr/local/bin/edgedriver", msEdgePath: browserPath)
         case "firefox":
-            self = .firefox(driverPath ?? "/usr/local/bin/geckodriver")
+            self = .firefox(driverPath ?? "/usr/local/bin/geckodriver", firefoxPath: browserPath)
         case "chromium":
-            self = .chromium(driverPath ?? "/usr/local/bin/chromedriver")
+            self = .chromium(driverPath ?? "/usr/local/bin/chromedriver", chromiumPath: browserPath)
         default:
             throw BrowserError.invalidBrowser(name: string)
         }
