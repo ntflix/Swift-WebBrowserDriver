@@ -18,9 +18,12 @@ public final class WebBrowserDriver: WebDriver {
 
     public static func connect(service: BrowserService) async throws -> WebBrowserDriver {
         // Start the service if we’re managing it.
-        if !service.reuseService {
-            try await service.start()
-        }
+        #if canImport(Network)
+            if !service.reuseService {
+                try await service.start()
+            }
+        #endif
+
         let http = HTTPWebDriver(endpoint: service.serviceURL, wireProtocol: .w3c)
         return WebBrowserDriver(httpWebDriver: http, service: service)
     }
@@ -49,7 +52,7 @@ public final class WebBrowserDriver: WebDriver {
     }
 
     public static func makeSession(with browser: Browser) async throws -> Session {
-        let service = BrowserService(browser: browser)
+        let service = try BrowserService(browser: browser)
         do {
             let driver = try await WebBrowserDriver.connect(service: service)
             do {
@@ -87,7 +90,8 @@ public final class WebBrowserDriver: WebDriver {
     public static func makeSession(with browser: Browser, host: String, port: Int) async throws
         -> Session
     {
-        let service = BrowserService(browser: browser, port: port, reuseService: true, host: host)
+        let service = try BrowserService(
+            browser: browser, port: port, reuseService: true, host: host)
         let driver = try await WebBrowserDriver.connect(service: service)
         return try Session.W3C.create(
             webDriver: driver,
