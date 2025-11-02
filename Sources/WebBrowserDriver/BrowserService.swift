@@ -1,13 +1,20 @@
 import Foundation
-import Network
+
+#if canImport(Network)
+    import Network
+#else
+    import FoundationNetworking
+#endif
 
 // Manages a WebDriver server process (safaridriver, chromedriver, geckodriver, msedgedriver, etc.)
 // or connects to an already-running service when reuseService is true.
 public final class BrowserService {
     public struct ServiceError: Error {
         public let message: String
-        public static let failedToAllocatePort = ServiceError(message: "Failed to allocate free port.")
-        public static let missingPortForExternalService = ServiceError(message: "No executable configured and port not provided for external service.")
+        public static let failedToAllocatePort = ServiceError(
+            message: "Failed to allocate free port.")
+        public static let missingPortForExternalService = ServiceError(
+            message: "No executable configured and port not provided for external service.")
     }
 
     // Supported overridable env keys for driver executables.
@@ -105,9 +112,9 @@ public final class BrowserService {
         if let browserExec = browserExecutablePath {
             switch browser {
             #if os(macOS)
-            case .safari, .safariTechnologyPreview:
-                // safaridriver does not take a browser path argument.
-                break
+                case .safari, .safariTechnologyPreview:
+                    // safaridriver does not take a browser path argument.
+                    break
             #endif
             case .chrome, .chromium:
                 args.append(contentsOf: ["--chrome-binary", browserExec])
@@ -116,7 +123,7 @@ public final class BrowserService {
             case .firefox:
                 args.append(contentsOf: ["--binary", browserExec])
             }
-        
+
         }
         if !serviceArgs.isEmpty {
             args += serviceArgs
@@ -145,7 +152,10 @@ public final class BrowserService {
         } catch {
             try? outputFileHandle?.close()
             outputFileHandle = nil
-            throw ServiceError(message: "Failed to start driver for \(browser) at \(executablePath ?? "<none>"): \(error)")
+            throw ServiceError(
+                message:
+                    "Failed to start driver for \(browser) at \(executablePath ?? "<none>"): \(error)"
+            )
         }
         process = proc
 
@@ -190,7 +200,8 @@ public final class BrowserService {
 
     private func assertProcessStillRunning() throws {
         if let proc = process, !proc.isRunning {
-            throw ServiceError(message: "WebDriver process exited early with code \(proc.terminationStatus).")
+            throw ServiceError(
+                message: "WebDriver process exited early with code \(proc.terminationStatus).")
         }
     }
 
@@ -251,9 +262,9 @@ public final class BrowserService {
     private func driverPortArguments(browser: Browser, port: Int) -> [String] {
         switch browser {
         #if os(macOS)
-        case .safari, .safariTechnologyPreview:
-            // safaridriver uses "-p <port>"
-            return ["-p", String(port)]
+            case .safari, .safariTechnologyPreview:
+                // safaridriver uses "-p <port>"
+                return ["-p", String(port)]
         #endif
         case .chrome, .chromium, .msedge:
             // chromedriver/msedgedriver use "--port=<port>"
