@@ -43,7 +43,7 @@ public final class WebBrowserDriver: WebDriver {
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
         httpWebDriver.isInconclusiveInteraction(error: error)
     }
-    
+
     public func stop() {
         service.stop()
     }
@@ -61,7 +61,8 @@ public final class WebBrowserDriver: WebDriver {
                 return session
             } catch {
                 throw StartError(
-                    message: "Unable to create WebBrowserDriver session. Underlying error: \(error)",
+                    message:
+                        "Unable to create WebBrowserDriver session. Underlying error: \(error)",
                     underlyingError: error
                 )
             }
@@ -71,5 +72,27 @@ public final class WebBrowserDriver: WebDriver {
                 underlyingError: error
             )
         }
+    }
+
+    /// Create a session connected to an existing browser service at the given host and port.
+    ///
+    /// - Parameters:
+    ///  - browser: The browser type to connect to.
+    /// - host: The host where the browser service is running.
+    /// - port: The port where the browser service is running.
+    /// - Returns: A `Session` connected to the existing browser service.
+    ///
+    /// - Note: This method assumes that the browser service is already running and accessible at the specified host and port.
+    /// Good for connecting to remote browser services (e.g. headless containers).
+    public static func makeSession(with browser: Browser, host: String, port: Int) async throws
+        -> Session
+    {
+        let service = BrowserService(browser: browser, port: port, reuseService: true, host: host)
+        let driver = try await WebBrowserDriver.connect(service: service)
+        return try Session.W3C.create(
+            webDriver: driver,
+            alwaysMatch: Capabilities(),
+            firstMatch: [browser.capabilities]
+        )
     }
 }

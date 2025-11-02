@@ -12,17 +12,17 @@ public enum Browser: Sendable {
                 "/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver")
     #endif
     case chrome(
-        _ driverPath: String?,
-        chromePath: String? = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+        _ driverPath: String? = nil,
+        chromePath: String? = nil)
     case msedge(
-        _ driverPath: String?,
-        msEdgePath: String? = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge")
+        _ driverPath: String? = nil,
+        msEdgePath: String? = nil)
     case firefox(
-        _ driverPath: String?,
-        firefoxPath: String? = "/Applications/Firefox.app/Contents/MacOS/firefox")
+        _ driverPath: String? = nil,
+        firefoxPath: String? = nil)
     case chromium(
-        _ driverPath: String?,
-        chromiumPath: String? = "/Applications/Chromium.app/Contents/MacOS/Chromium")
+        _ driverPath: String? = nil,
+        chromiumPath: String? = nil)
 
     public var driverPath: String? {
         switch self {
