@@ -10,9 +10,8 @@ import WebDriver
 func loadURL(url: String) async throws {
     let browser = Browser.chromium(nil, chromiumPath: nil)
 
-    // let session = try await WebBrowserDriver.makeSession(with: browser)
-    let session = try await WebBrowserDriver.makeSession(
-        with: browser, host: "127.0.0.1", port: 4444)
+    let webBrowserDriver = WebBrowserDriver(browser: browser, host: "127.0.0.1", port: 4444)
+    let session = try webBrowserDriver.createSession()
 
     let url = try #require(URL(string: url))
     try session.url(url)
@@ -28,8 +27,8 @@ func loadURL(url: String) async throws {
 func findElement(url: String, xpath: String, expectedText: String) async throws {
     let browser = Browser.chromium(nil, chromiumPath: nil)
 
-    let session = try await WebBrowserDriver.makeSession(
-        with: browser, host: "127.0.0.1", port: 4444)
+    let webBrowserDriver = WebBrowserDriver(browser: browser, host: "127.0.0.1", port: 4444)
+    let session = try webBrowserDriver.createSession()
 
     let url = try #require(URL(string: url))
     try session.url(url)
