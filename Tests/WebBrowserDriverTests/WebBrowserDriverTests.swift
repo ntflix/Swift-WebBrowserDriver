@@ -11,15 +11,15 @@ func loadURL(url: String) async throws {
     let browser = Browser.chromium(nil, chromiumPath: nil)
 
     let webBrowserDriver = WebBrowserDriver(browser: browser, host: "127.0.0.1", port: 4444)
-    let session = try webBrowserDriver.createSession()
+    let session = try await webBrowserDriver.createSession()
 
     let url = try #require(URL(string: url))
-    try session.url(url)
+    try await session.url(url)
 
-    let title = try session.title
+    let title = try await session.title
     #expect(title == "Example Domain", "Title should be 'Example Domain', got '\(title)'")
 
-    try session.delete()
+    try await session.delete()
 }
 
 @Test(
@@ -28,16 +28,16 @@ func findElement(url: String, xpath: String, expectedText: String) async throws 
     let browser = Browser.chromium(nil, chromiumPath: nil)
 
     let webBrowserDriver = WebBrowserDriver(browser: browser, host: "127.0.0.1", port: 4444)
-    let session = try webBrowserDriver.createSession()
+    let session = try await webBrowserDriver.createSession()
 
     let url = try #require(URL(string: url))
-    try session.url(url)
+    try await session.url(url)
 
     let locator = ElementLocator.xpath(xpath)
 
-    let element = try session.findElement(locator: locator)
-    let text = try element.text
+    let element = try await session.findElement(locator: locator)
+    let text = try await element.text
     #expect(text == expectedText, "Element text should be '\(expectedText)', got '\(text)'")
 
-    try session.delete()
+    try await session.delete()
 }

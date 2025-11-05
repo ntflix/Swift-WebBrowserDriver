@@ -5,7 +5,6 @@ import WebDriver
 ///
 /// Encapsulates a browser service alongside an HTTP-based WebDriver client to provide high-level automation capabilities for Safari.
 public final class WebBrowserDriver: WebDriver {
-    private let queue = DispatchQueue(label: "WebBrowserDriver", attributes: .concurrent)
     public var wireProtocol: WireProtocol { .w3c }
     private let browser: Browser
     private let httpWebDriver: WebDriver
@@ -20,30 +19,24 @@ public final class WebBrowserDriver: WebDriver {
     }
 
     @discardableResult
-    public func send<Req: Request>(_ request: Req) throws -> Req.Response {
-        try queue.sync {
-            try httpWebDriver.send(request)
-        }
+    public func send<Req: Request>(_ request: Req) async throws -> Req.Response {
+        try await httpWebDriver.send(request)
     }
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
-        queue.sync {
-            httpWebDriver.isInconclusiveInteraction(error: error)
-        }
+        httpWebDriver.isInconclusiveInteraction(error: error)
     }
 
     /// Create a session.
     ///
     /// - Returns: A `Session` connected to the existing browser service.
-    public func createSession() throws
+    public func createSession() async throws
         -> Session
     {
-        try queue.sync {
-            return try Session.W3C.create(
-                webDriver: self.httpWebDriver,
-                alwaysMatch: Capabilities(),
-                firstMatch: [self.browser.capabilities]
-            )
-        }
+        return try await Session.W3C.create(
+            webDriver: self.httpWebDriver,
+            alwaysMatch: Capabilities(),
+            firstMatch: [self.browser.capabilities]
+        )
     }
 }
