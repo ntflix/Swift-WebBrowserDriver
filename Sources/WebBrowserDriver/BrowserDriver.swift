@@ -4,7 +4,7 @@ import WebDriver
 /// Coordinates communication with a browser instance using the W3C WebDriver protocol, handling request forwarding.
 ///
 /// Encapsulates a browser service alongside an HTTP-based WebDriver client to provide high-level automation capabilities for Safari.
-public final class WebBrowserDriver: WebDriver {
+public actor WebBrowserDriver: @preconcurrency WebDriver {
     public var wireProtocol: WireProtocol { .w3c }
     private let browser: Browser
     private let httpWebDriver: WebDriver
