@@ -4,7 +4,8 @@ import WebDriver
 /// Coordinates communication with a browser instance using the W3C WebDriver protocol, handling request forwarding.
 ///
 /// Encapsulates a browser service alongside an HTTP-based WebDriver client to provide high-level automation capabilities for Safari.
-public actor WebBrowserDriver: @preconcurrency WebDriver {
+public final class WebBrowserDriver: WebDriver {
+    private let queue = DispatchQueue(label: "WebBrowserDriver", attributes: .concurrent)
     public var wireProtocol: WireProtocol { .w3c }
     private let browser: Browser
     private let httpWebDriver: WebDriver
@@ -20,11 +21,15 @@ public actor WebBrowserDriver: @preconcurrency WebDriver {
 
     @discardableResult
     public func send<Req: Request>(_ request: Req) throws -> Req.Response {
-        try httpWebDriver.send(request)
+        try queue.sync {
+            try httpWebDriver.send(request)
+        }
     }
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
-        httpWebDriver.isInconclusiveInteraction(error: error)
+        queue.sync {
+            httpWebDriver.isInconclusiveInteraction(error: error)
+        }
     }
 
     /// Create a session.
@@ -33,10 +38,12 @@ public actor WebBrowserDriver: @preconcurrency WebDriver {
     public func createSession() throws
         -> Session
     {
-        return try Session.W3C.create(
-            webDriver: self.httpWebDriver,
-            alwaysMatch: Capabilities(),
-            firstMatch: [self.browser.capabilities]
-        )
+        try queue.sync {
+            return try Session.W3C.create(
+                webDriver: self.httpWebDriver,
+                alwaysMatch: Capabilities(),
+                firstMatch: [self.browser.capabilities]
+            )
+        }
     }
 }
