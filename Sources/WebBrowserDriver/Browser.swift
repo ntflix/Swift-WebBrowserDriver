@@ -13,24 +13,32 @@ public enum Browser: Sendable {
     #endif
     case chrome(
         _ driverPath: String? = nil,
-        chromePath: String? = nil)
+        chromePath: String? = nil,
+        args: [String] = ["--headless", "--disable-gpu", "--no-sandbox"]
+    )
     case msedge(
         _ driverPath: String? = nil,
-        msEdgePath: String? = nil)
+        msEdgePath: String? = nil,
+        args: [String] = ["--headless", "--disable-gpu", "--no-sandbox"]
+    )
     case firefox(
         _ driverPath: String? = nil,
-        firefoxPath: String? = nil)
+        firefoxPath: String? = nil,
+        args: [String] = ["-headless"]
+    )
     case chromium(
         _ driverPath: String? = nil,
-        chromiumPath: String? = nil)
+        chromiumPath: String? = nil,
+        args: [String] = ["--headless", "--disable-gpu", "--no-sandbox"]
+    )
 
     public var driverPath: String? {
         switch self {
         #if os(macOS)
             case .safari(let path), .safariTechnologyPreview(let path): return path
         #endif
-        case .chrome(let path, _), .msedge(let path, _), .firefox(let path, _),
-            .chromium(let path, _):
+        case .chrome(let path, _, _), .msedge(let path, _, _), .firefox(let path, _, _),
+            .chromium(let path, _, _):
             return path
         }
     }
@@ -40,8 +48,8 @@ public enum Browser: Sendable {
         #if os(macOS)
             case .safari, .safariTechnologyPreview: return nil
         #endif
-        case .chrome(_, let path), .msedge(_, let path), .firefox(_, let path),
-            .chromium(_, let path):
+        case .chrome(_, let path, _), .msedge(_, let path, _), .firefox(_, let path, _),
+            .chromium(_, let path, _):
             return path
         }
     }
@@ -49,24 +57,34 @@ public enum Browser: Sendable {
     public var capabilities: Capabilities {
         let capabilities = Capabilities()
         switch self {
-        case .msedge(_, let msEdgePath):
-            let msEdgeOptions = Capabilities.EdgeOptions()
+
+        case .msedge(_, let msEdgePath, let args):
+            let msEdgeOptions =
+                try! Capabilities.EdgeOptions.create(with: args) as! Capabilities.EdgeOptions
+
             if let msEdgePath {
                 msEdgeOptions.binary = msEdgePath
             }
             capabilities.msEdgeOptions = msEdgeOptions
-        case .chrome(_, let chromePath), .chromium(_, let chromePath):
-            let chromeOptions = Capabilities.ChromeOptions()
+
+        case .chrome(_, let chromePath, let args), .chromium(_, let chromePath, let args):
+            let chromeOptions =
+                try! Capabilities.ChromeOptions.create(with: args) as! Capabilities.ChromeOptions
+
             if let chromePath {
                 chromeOptions.binary = chromePath
             }
             capabilities.chromeOptions = chromeOptions
-        case .firefox(_, let firefoxPath):
-            let firefoxOptions = Capabilities.FirefoxOptions()
+
+        case .firefox(_, let firefoxPath, let args):
+            let firefoxOptions =
+                try! Capabilities.FirefoxOptions.create(with: args) as! Capabilities.FirefoxOptions
+
             if let firefoxPath {
                 firefoxOptions.binary = firefoxPath
             }
             capabilities.firefoxOptions = firefoxOptions
+
         default:
             break
         }
