@@ -1,6 +1,6 @@
 # Swift-WebBrowserDriver
 
-A layer over [the excellent `swift-webdriver`](https://github.com/thebrowsercompany/swift-webdriver) to expose the webdrivers of Safari, Edge, Chrome/Chromium, and Firefox.
+A layer over [(my fork of) The Browser Company's `swift-webdriver`](https://github.com/ntflix/swift-webdriver) (forked to implement more of the W3C spec WebDriver protocol) to expose the webdrivers of Safari, Edge, Chrome/Chromium, and Firefox.
 
 Don't rely on this to work.
 
