@@ -24,7 +24,7 @@ public final class WebBrowserDriver: WebDriver {
     @discardableResult
     public func send<Req: Request>(_ request: Req) async throws -> Req.Response {
         self.logger.debug("Sending request: \(request)")
-        try await httpWebDriver.send(request)
+        return try await httpWebDriver.send(request)
     }
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
