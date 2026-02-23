@@ -16,7 +16,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/ntflix/swift-webdriver/", branch: "main")
+        .package(url: "https://github.com/ntflix/swift-webdriver/", branch: "main"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,7 +25,8 @@ let package = Package(
         .target(
             name: "WebBrowserDriver",
             dependencies: [
-                .product(name: "WebDriver", package: "swift-webdriver")
+                .product(name: "WebDriver", package: "swift-webdriver"),
+                .product(name: "Logging", package: "swift-log")
             ]
         ),
         .testTarget(
